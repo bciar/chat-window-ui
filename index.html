@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>RecruiterConciergeModal</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <div class="chat-window" style="visibility:hidden;opacity:0;">
+        <div class="chat-header">
+            <div class="chat-header-content">
+                <div class="ribbon-white icon"></div>
+                <label class="label-company">COMPANY NAME</label>
+            </div>
+        </div>
+        <div class="chat-body">
+            <div class="chat-row support">
+                <div class="ribbon-green chat-icon"></div>
+                <div class="support-bubble bubble">Hello</div>
+            </div>
+            <div class="chat-row support">
+                <div class="ribbon-green chat-icon"></div>
+                <div class="support-bubble bubble">I am your Recruiter Concierge. Thank you for your interest in &lt;COMPANY NAME&gt;, we’re honored you’ve chosen to apply</div>
+            </div>
+            <div class="chat-row support">
+                <div class="ribbon-green chat-icon"></div>
+                <span class="typing"><i class="a"></i><i class="b"></i><i class="c"></i></span>
+            </div>
+        </div>
+        <div class="chat-input">
+            <textarea placeholder="You can type here..."></textarea>
+            <div class="chat-input-buttons">
+                <div class="btn chat-input-upload-button">
+                    <div class="icon icon-clip"></div>
+                    <input type="file" style="display:none;" id="file-browser">
+                </div>
+                <div class="btn chat-send-button">
+                    <div class="icon icon-arrow"></div>
+                </div>
+            </div>
+            <div class="active-button btn-send" style="display:none;">
+            </div>
+            <div class="active-button btn-clip" style="display:none;">
+            </div>
+        </div>
+        <div class="chat-footer">
+            powered with <label class="icon">&hearts;</label> by HireHumanly
+        </div>
+    </div>
+    <div class="green-back btn-circle bottom-right ribbon-white" id="btn-widget"></div>
+    <script>
+        var show = false;
+        var textareaElement = document.querySelector('.chat-input textarea');
+        var isActiveSend = false;
+        document.getElementById('btn-widget').onclick = function() {
+            show = !show;
+            document.querySelector('.chat-window').style.visibility = show ? 'visible' : 'hidden';
+            document.querySelector('.chat-window').style.opacity = show ? 1 : 0;
+            const self = document.getElementById('btn-widget');
+            let selfClass = "green-back btn-circle bottom-right " + (!show ? "ribbon-white" : "times-white");
+            self.className = selfClass;
+        }
+
+        textareaElement.addEventListener('keydown', autosize); 
+        function autosize(e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                e.preventDefault();
+                sendText();
+            }
+            var el = this;
+            setTimeout(function(){
+                el.style.cssText = 'height:30px;';
+                // for box-sizing other than "content-box" use:
+                // el.style.cssText = '-moz-box-sizing:content-box';
+                el.style.cssText = 'height:' + el.scrollHeight + 'px';
+            },0);
+        }
+        textareaElement.addEventListener('keyup', keyup);
+        function keyup() {
+            if (textareaElement.value.length > 0 && !isActiveSend) {
+                document.querySelector('.chat-input-buttons').style.display = 'none';
+                document.querySelector('.btn-send').style.display = 'block';
+                document.querySelector('.btn-clip').style.display = 'none';
+                isActiveSend = true;
+            } else if (textareaElement.value.length === 0) {
+                document.querySelector('.chat-input-buttons').style.display = 'flex';
+                document.querySelector('.btn-send').style.display = 'none';
+                document.querySelector('.btn-clip').style.display = 'none';
+                isActiveSend = false;
+            }
+        }
+        document.querySelector('.chat-input-upload-button').addEventListener('click', function() {
+            document.querySelector('.btn-clip').style.display = 'block';
+            document.querySelector('.chat-input-buttons').style.display = 'none';
+            document.querySelector('.btn-send').style.display = 'none';
+        });
+
+        document.querySelector('.btn-send').addEventListener('click', sendText);
+        function sendText() {
+            const text = textareaElement.value;
+            if (text.length > 0) {
+                var node = document.createElement("div");
+                node.className="user-bubble bubble";
+                var textnode = document.createTextNode(text);
+                node.appendChild(textnode);
+                var chatRow = document.createElement("div");
+                chatRow.className="chat-row user";
+                chatRow.appendChild(node);
+                document.querySelector('.chat-body').appendChild(chatRow);
+                
+                var chatBody = document.querySelector(".chat-body");
+                chatBody.scrollTop = chatBody.scrollHeight;
+                textareaElement.value = '';
+            }
+            keyup();
+        }
+
+        document.querySelector('.btn-clip').addEventListener('click', function() {
+            document.getElementById('file-browser').click();
+        })
+    </script>
+</body>
+</html>
